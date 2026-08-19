@@ -57,7 +57,9 @@ _(Automations y su schedule / SQL queries asociadas.)_
 
 **Problema:** contrato 500k contactos; están ~600k. Objetivo: identificar borrables (sin email/phone) y duplicados.
 
-- **All Subscribers (padrón email) = 328,518.** 0 emails vacíos, 0 inválidos (todos los email-subs tienen email válido).
+- **All Contacts (facturable, leído de Contact Builder UI 2026-08-19) = 582,515.** Contrato: 500k → sobran **82,515**. NO hay API de conteo de All Contacts (Contacts API da 404 en este package); la fuente autoritativa es la pantalla All Contacts.
+- **All Subscribers (padrón email) = 328,518** (56% del total). 0 emails vacíos, 0 inválidos (todos los email-subs tienen email válido).
+- **No-email (por diferencia) = 582,515 − 328,518 = 253,997** (44%): SMS/WhatsApp/push. Ahí viven los "sin email". No verificado por SQL (usuario prefirió no crear objetos).
 - **Duplicados por email = 99,309 registros extra (30.2%)** → mismo email, distinto SubscriberKey (= ID de Salesforce). Consolidar a 1/email deja 229,209.
 - Desuscritos: 4,761 (1.4%).
 - **All Contacts (facturable, ~600k) > 328k email-subs.** El gap (~270k) son contactos NO-email (SMS/WhatsApp/push) → ahí viven los "sin email". Falta medir con SQL sobre `_MobileAddress` / `_Subscribers` (Query Activity).
