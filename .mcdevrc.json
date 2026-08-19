@@ -1,0 +1,28 @@
+{
+    "credentials": {
+        "addi": {
+            "eid": 0,
+            "businessUnits": {}
+        }
+    },
+    "options": {
+        "formatOnSave": true,
+        "documentType": "md",
+        "exclude": {},
+        "include": {},
+        "serverTimeOffset": -6
+    },
+    "directories": {
+        "businessUnits": "businessUnits/",
+        "deploy": "deploy/",
+        "docs": "docs/",
+        "retrieve": "retrieve/",
+        "template": "template/",
+        "templateBuilds": ["retrieve/", "deploy/"]
+    },
+    "metaDataTypes": {
+        "documentOnRetrieve": ["automation", "dataExtension"],
+        "retrieve": [],
+        "createDeltaPkg": []
+    }
+}

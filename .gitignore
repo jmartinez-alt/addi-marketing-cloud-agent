@@ -1,0 +1,22 @@
+# === Secretos — NUNCA subir ===
+.mcdev-auth.json
+
+# === Datos de mcdev (metadata descargada / de despliegue) ===
+# El repo es el AGENTE, no un backup de metadata. Si el equipo decide
+# versionar la metadata, quiten estas líneas.
+/retrieve/
+/deploy/
+/docs/
+/template/
+/businessUnits/
+
+# === Logs y temporales de mcdev ===
+/logs/
+**/QueryStudioResults at*
+.mcdev/template/
+*.error.log
+*.BAK
+
+# === General ===
+*.DS_Store
+node_modules/
