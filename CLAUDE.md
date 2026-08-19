@@ -60,9 +60,23 @@ Copy-Item "$env:USERPROFILE\.claude\marketing-cloud-agent\.claude\agents\marketi
 (Crea antes `<HOME>/.claude/agents/` si no existe.)
 
 ### 1d. Conectar Marketing Cloud (crear `.mcdev-auth.json`)
-mcdev se autentica con un **Installed Package** de Marketing Cloud (Setup → Installed Packages →
-componente **API Integration** tipo **Server-to-Server**). De ahí salen 4 datos:
+mcdev se autentica con un **Installed Package** de Marketing Cloud. De ahí salen 4 datos:
 `Client ID`, `Client Secret`, `Authentication Base URI` y el `MID` de la BU padre (EID).
+
+**Si el colega aún no tiene las llaves, guíalo a crearlas** (necesita el permiso
+*Installed Package | Administer*). Ábrele la página con un clic y dale el paso a paso:
+- Abrir Installed Packages (stack s13):
+  `Start-Process "https://mc.s13.exacttarget.com/cloud/#app/Setup/InstalledPackages"` (Win) /
+  `open "https://mc.s13.exacttarget.com/cloud/#app/Setup/InstalledPackages"` (mac).
+  Fallback manual: MC → clic en el **usuario** (arriba dcha) → **Setup** → **Platform Tools** →
+  **Apps** → **Installed Packages**.
+- Pasos: **New** (nombre `mcdev-cli`) → **Add Component** → **API Integration** → **Server-to-Server**
+  → marcar scopes (Data Extensions, Automations, Journeys, Email, Assets, Data Extract, File
+  Locations, Tracking — lectura/escritura) → **Save**.
+- En el detalle del componente están **Client Id**, **Client Secret** y **Authentication Base URI**;
+  el **MID** de la BU padre está junto al nombre de la cuenta / en Account Settings.
+- ⚠️ El **Client Secret caduca cada 180 días** → cuando falle la auth, regenerarlo y reconectar.
+  (Ver el detalle completo en el `README.md`, sección "Cómo conseguir las 4 llaves".)
 
 El secreto va en `<REPO>/.mcdev-auth.json` con este formato (nombre de credencial = `addi`):
 ```json

@@ -37,16 +37,39 @@ algo nuevo (una BU, una Data Extension, un Journey), el agente lo guarda y lo co
 > Los detalles técnicos del instalador viven en [`CLAUDE.md`](./CLAUDE.md) — es lo que Claude Code
 > lee para saber cómo instalar, autenticar y sincronizar el aprendizaje.
 
-## Cómo conectar Marketing Cloud (Installed Package)
+## Cómo conseguir las 4 llaves (Installed Package)
 
-1. En Marketing Cloud → **Setup → Platform Tools → Apps → Installed Packages → New**.
-2. Crea un paquete y añade un componente **API Integration** de tipo **Server-to-Server**.
-3. Asigna los scopes/permisos que necesites (leer/escribir Data Extensions, Automations,
-   Journeys, Email, etc.).
-4. Copia **Client ID**, **Client Secret**, **Authentication Base URI** y el **MID** de la BU padre.
+Necesitas **Client ID**, **Client Secret**, **Authentication Base URI** y el **MID** de la BU
+padre (EID). Se obtienen creando un *Installed Package* en Marketing Cloud. Requiere el permiso
+**Installed Package | Administer** (roles Administrator / Marketing Cloud Administrator).
 
-Con esos 4 datos, Claude deja mcdev conectado (crea el `.mcdev-auth.json`, que **nunca** se sube
-a git porque está en `.gitignore`).
+**Atajo de un clic** — abre directo la página de Installed Packages (stack s13):
+
+- Windows (PowerShell): `Start-Process "https://mc.s13.exacttarget.com/cloud/#app/Setup/InstalledPackages"`
+- macOS: `open "https://mc.s13.exacttarget.com/cloud/#app/Setup/InstalledPackages"`
+- Si ese enlace no cae en la página exacta: entra a Marketing Cloud → clic en tu **usuario**
+  (arriba a la derecha) → **Setup** → **Platform Tools** → **Apps** → **Installed Packages**.
+
+**Pasos:**
+
+1. **New** → ponle nombre (ej. `mcdev-cli`) y descripción → **Save**.
+2. Dentro del paquete: **Add Component** → **API Integration** → **Next**.
+3. Tipo **Server-to-Server** → **Next**.
+4. Marca los **scopes/permisos** que el agente necesitará (mínimo lectura/escritura de:
+   Data Extensions, Automations, Journeys, Email, Content Builder / Assets, Data Extract,
+   File Locations, Tracking). Puedes ampliarlos luego. → **Save**.
+5. En el detalle del componente copia:
+   - **Client Id** → `client_id`
+   - **Client Secret** → `client_secret`
+   - **Authentication Base URI** (ej. `https://XXXXX.auth.marketingcloudapis.com/`) → `auth_url`
+   - **MID** de tu Business Unit padre (arriba, junto al nombre de la cuenta, o en Account Settings)
+     → `account_id` / EID
+
+> ⚠️ **El Client Secret caduca cada 180 días** (y Salesforce fuerza rotación de secretos de S2S
+> desde 2026). Cuando caduque, genera uno nuevo aquí mismo y vuelve a conectar (`mcdev init addi`).
+
+Con esos 4 datos, Claude (o tú, con `mcdev init addi`) deja mcdev conectado creando el
+`.mcdev-auth.json`, que **nunca** se sube a git porque está en `.gitignore`.
 
 ## Cómo funciona el aprendizaje compartido
 
