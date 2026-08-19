@@ -1,13 +1,52 @@
 {
     "credentials": {
         "addi": {
-            "eid": 0,
-            "businessUnits": {}
+            "eid": 546003659,
+            "businessUnits": {
+                "_ParentBU_": 546003659
+            }
         }
     },
     "options": {
         "formatOnSave": true,
+        "formatErrorLog": false,
+        "deployment": {
+            "commitHistory": 10,
+            "sourceTargetMapping": {
+                "deployment-source": "deployment-target"
+            },
+            "branchSourceTargetMapping": {},
+            "targetBranchBuMapping": {}
+        },
+        "validation": {
+            "retrieve": {
+                "noAmpscriptHtmlTag": "warn",
+                "noGuidKeys": "warn",
+                "noRootFolder": "warn"
+            },
+            "buildDefinition": {
+                "noAmpscriptHtmlTag": "warn",
+                "noGuidKeys": "warn",
+                "noRootFolder": "warn"
+            },
+            "deploy": {
+                "noAmpscriptHtmlTag": "warn",
+                "noGuidKeys": "warn",
+                "noRootFolder": "warn",
+                "overrides": [
+                    {
+                        "type": [
+                            "journey"
+                        ],
+                        "options": {
+                            "noGuidKeys": "warn"
+                        }
+                    }
+                ]
+            }
+        },
         "documentType": "md",
+        "documentStandardRoles": false,
         "exclude": {},
         "include": {},
         "serverTimeOffset": -6
@@ -18,11 +57,20 @@
         "docs": "docs/",
         "retrieve": "retrieve/",
         "template": "template/",
-        "templateBuilds": ["retrieve/", "deploy/"]
+        "templateBuilds": [
+            "retrieve/",
+            "deploy/"
+        ]
     },
+    "markets": {},
+    "marketList": {},
     "metaDataTypes": {
-        "documentOnRetrieve": ["automation", "dataExtension"],
+        "documentOnRetrieve": [
+            "automation",
+            "dataExtension"
+        ],
         "retrieve": [],
         "createDeltaPkg": []
-    }
+    },
+    "version": "9.0.3"
 }

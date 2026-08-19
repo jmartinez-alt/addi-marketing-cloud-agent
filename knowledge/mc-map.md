@@ -8,16 +8,17 @@
 ## Instancia
 
 - **Stack / Tenant:** s13 (`mc.s13.exacttarget.com`). El `auth_url` del Installed Package es
-  `https://<subdominio>.auth.marketingcloudapis.com/`.
-- **Credencial mcdev:** `addi` (EID = MID de la BU padre).
+  `https://mc1vr5zw7cydtlvpy2j89--pg470.auth.marketingcloudapis.com/`.
+- **Credencial mcdev:** `addi`. **EID / MID padre:** `546003659`.
+- **Cuenta:** Adelante Soluciones Financieras SAS (NIT: 9012167) — la razón social de Addi.
 
 ## Business Units
 
-_(Se llenan al correr `mcdev reloadBUs addi`. Anota aquí las BUs relevantes y para qué se usan.)_
+_(Verificado con `mcdev reloadBUs addi` el 2026-08-19.)_
 
 | BU (mcdev: `addi/<nombre>`) | MID | Uso | Notas |
 |---|---|---|---|
-| _pendiente_ | | | |
+| `_ParentBU_` (Adelante Soluciones Financieras SAS) | 546003659 | BU padre / cuenta principal | Único BU visible con el Installed Package actual. Si se necesitan BUs hijas, ampliar el acceso del package y correr `mcdev reloadBUs addi`. |
 
 ## Data Extensions clave
 
