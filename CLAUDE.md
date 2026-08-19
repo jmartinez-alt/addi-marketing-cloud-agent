@@ -38,7 +38,7 @@ aprobación de cada comando; explica en una línea qué hace).
 
 ### 1b. Clonar el repo a la ubicación estándar
 ```
-git clone <URL_DEL_REPO> "<HOME>/.claude/marketing-cloud-agent"
+git clone https://github.com/jmartinez-alt/addi-marketing-cloud-agent "<HOME>/.claude/marketing-cloud-agent"
 ```
 Si ya existe: `git -C "<HOME>/.claude/marketing-cloud-agent" pull`.
 
