@@ -72,6 +72,25 @@ _(Automations y su schedule / SQL queries asociadas.)_
 - Token OAuth v2 (client_credentials) → REST `data/v1/customobjectdata/key/{key}/rowset?$pageSize=1` para row counts; SOAP `Retrieve` de `Subscriber` (paginado 2500, ContinueRequest) para el padrón.
 - El Installed Package tiene scopes amplios (data_extensions_read, list_and_subscribers_read, etc.).
 
+## Journey + Automation "AutomatizacionM0" (analizado 2026-08-20)
+
+Nurture de onboarding/activación SMB (MBs), multicanal (~30 días). Creado por sguillen (Comms Dayana).
+
+**Flujo de datos (Automation `AutomatizacionM0`, scheduled, cada 15 min, HOY EN PAUSA):**
+1. Query `AutomatizacionM0` (Update) → DE entrada `AutomatizacionM0` (key F348506D). Fuente: `Opportunity_Salesforce` + joins a Account/Contact (Associated + Legal Rep). Filtros: Checkin_Date_Activation NOT NULL, rank=1, Cluster='SMB', Acquisition_Channel='MBs', StageName IN (Activation,Onboarding,Churned,Early life cycle). Normaliza Phone a '57...'.
+2. Query `AutomatizacionM02` (Update) → `DE_Import_Whatsapp_ALLC` (FFE4485E): solo nuevos (LEFT JOIN ... WHERE D.ContactKey IS NULL), Id as ContactKey, Phone, 'co' Locale.
+3. ImportFile `Import_WhatsApp_v2` → importa a `DE_Import_Whatsapp_ALLC` (misma DE ⇒ posible redundancia).
+
+**Journey (Draft, NUNCA publicado; entryMode=MultipleEntries):** 120 actividades (54 WAIT, 45 decisiones MultiCriteria, 9 WhatsApp, 6 Email, 6 SMS). Entrada = DE audience `AutomatizacionM0`. Splits por Segmento/Stage/Flujo/Dias con cadencia Día 8/11/17/21/24/27/30 y variantes A/B. Sin goals ni exit.
+
+**Bugs/riesgos detectados:**
+- WhatsApp usa `mobileNumberExpression=defaultContactKey` (= ID de Salesforce, no el phone) → no entregaría. CRÍTICO, verificar.
+- Normalización de phone: `REPLACE(...,'57','')` borra TODO '57' del número (no solo el prefijo) → corrompe números válidos.
+- Sin phone → Phone='57' (inválido) en vez de excluir.
+- Sin goal/exit → los que activan siguen recibiendo los 30 días.
+- MultipleEntries + refresh cada 15 min → riesgo de re-entrada/envíos duplicados.
+- Schedule cada 15 min excesivo para onboarding (mejor horario/diario).
+
 ## Convenciones y particularidades
 
 - SubscriberKey = ID de Salesforce (contactos sincronizados vía Marketing Cloud Connect).
