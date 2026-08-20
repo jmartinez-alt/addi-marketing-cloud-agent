@@ -88,7 +88,9 @@ Nurture de onboarding/activación SMB (MBs), multicanal (~30 días). Creado por 
 - Notificación de **error** a `sguillen@addi.com` (formato mcdev: `notifications:[{email:[...],message:"",type:"Error"}]`; se aplica vía `/legacy/v1/beta/automations/notifications/{programId}`).
 - Método: editar meta en `deploy/`, `mcdev deploy addi/_ParentBU_ automation <key>`. mcdev NO activa salvo `--schedule`. mcdev sí gestiona notifications; NO gestiona goals de journey.
 
-**OJO WhatsApp = `defaultContactKey` NO es bug:** las 9 actividades WA (y TODAS las WA de la cuenta) usan `mobileNumberExpression=defaultContactKey`. La Automation registra ContactKey+Phone en `DE_Import_Whatsapp_ALLC` → WhatsApp resuelve el número por el móvil registrado del contacto. Cambiarlo al phone de la DE de entrada probablemente ROMPE el envío. Dejar como está salvo confirmación.
+**WhatsApp cambiado a `phone` (2026-08-20, por decisión del usuario):** las 9 actividades WA ahora usan `mobileNumberAttributeName=phone` / `mobileNumberExpression={{Event.DEAudience-f9748921-...."phone"}}` (antes `defaultContactKey`). ⚠️ OJO: TODAS las WA de la cuenta usaban `defaultContactKey` y la Automation registra ContactKey+Phone en `DE_Import_Whatsapp_ALLC`, así que `defaultContactKey` podía ser el patrón intencional (resolver por móvil registrado). Se advirtió; el usuario pidió cambiarlo igual. Si el envío de WhatsApp falla, revertir con el backup en `_backup_M0_20260820/`. Journey sigue en Draft (no publicado).
+**Goal:** descartado por el usuario (no se agregó).
+**Deploy de journey:** vía `mcdev deploy addi/_ParentBU_ journey <key>` (soporte beta, funcionó; update atómico, actualiza el Draft in-place sin nueva versión).
 
 **Otros bugs/riesgos detectados:**
 - WhatsApp usa `mobileNumberExpression=defaultContactKey` (= ID de Salesforce, no el phone) → no entregaría. CRÍTICO, verificar.
