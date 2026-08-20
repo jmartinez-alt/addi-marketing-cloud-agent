@@ -83,7 +83,14 @@ Nurture de onboarding/activación SMB (MBs), multicanal (~30 días). Creado por 
 
 **Journey (Draft, NUNCA publicado; entryMode=MultipleEntries):** 120 actividades (54 WAIT, 45 decisiones MultiCriteria, 9 WhatsApp, 6 Email, 6 SMS). Entrada = DE audience `AutomatizacionM0`. Splits por Segmento/Stage/Flujo/Dias con cadencia Día 8/11/17/21/24/27/30 y variantes A/B. Sin goals ni exit.
 
-**Bugs/riesgos detectados:**
+**Cambios aplicados (2026-08-20, vía mcdev deploy, sin --schedule = sigue en pausa):**
+- Schedule 15 min → **cada 4 h** (`FREQ=HOURLY;INTERVAL=4`).
+- Notificación de **error** a `sguillen@addi.com` (formato mcdev: `notifications:[{email:[...],message:"",type:"Error"}]`; se aplica vía `/legacy/v1/beta/automations/notifications/{programId}`).
+- Método: editar meta en `deploy/`, `mcdev deploy addi/_ParentBU_ automation <key>`. mcdev NO activa salvo `--schedule`. mcdev sí gestiona notifications; NO gestiona goals de journey.
+
+**OJO WhatsApp = `defaultContactKey` NO es bug:** las 9 actividades WA (y TODAS las WA de la cuenta) usan `mobileNumberExpression=defaultContactKey`. La Automation registra ContactKey+Phone en `DE_Import_Whatsapp_ALLC` → WhatsApp resuelve el número por el móvil registrado del contacto. Cambiarlo al phone de la DE de entrada probablemente ROMPE el envío. Dejar como está salvo confirmación.
+
+**Otros bugs/riesgos detectados:**
 - WhatsApp usa `mobileNumberExpression=defaultContactKey` (= ID de Salesforce, no el phone) → no entregaría. CRÍTICO, verificar.
 - Normalización de phone: `REPLACE(...,'57','')` borra TODO '57' del número (no solo el prefijo) → corrompe números válidos.
 - Sin phone → Phone='57' (inválido) en vez de excluir.
