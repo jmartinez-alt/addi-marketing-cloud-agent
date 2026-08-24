@@ -100,6 +100,23 @@ Nurture de onboarding/activación SMB (MBs), multicanal (~30 días). Creado por 
 - MultipleEntries + refresh cada 15 min → riesgo de re-entrada/envíos duplicados.
 - Schedule cada 15 min excesivo para onboarding (mejor horario/diario).
 
+## Acceso usuario / Content Builder (2026-08-20)
+
+Caso `nlizarazo@addi.com`: error UNAUTHORIZED en Content Builder. Diagnóstico por API: usuario activo, no bloqueado, BU Adelante, roles **Administrator + Marketing Cloud Administrator** (idéntico a un admin que sí entra); el rol Administrator (`SYS_DEF_ADMIN`) incluye Content Builder/Content Builder Admin; sin "Individual role for..." (sin denies individuales). → NO era provisión ni permisos: era **propagación/caché de permisos**. **Solución que funcionó:** re-guardar el rol Administrator en UI (Setup→Users→quitar y re-marcar Administrator→Save) + relogin. NO se puede hacer por API/mcdev: el rol "Marketing Cloud Administrator" NO es asignable por API y se borraría al actualizar el usuario. El agente no controla el navegador → este fix es UI-only.
+
+## DEs de comms fed-by-file: goalcomms, Merchant_Intelligence_SBs (2026-08-20)
+
+Migración a Marketing Cloud Next. Hallazgo: **NO se alimentan del CRM vía Automation Studio.**
+- `goalcomms` (key 6274A1E2, Comms Jose): campos Id/Name/Email/Phone/Variable/Variable_2..4. Se llena por **importFile `goalcomms.csv`** (automation "comms goal" 27482B8A, tipo triggered). Los `Variable*` son contenido de campaña, no CRM.
+- `Merchant_Intelligence_SBs` (key BC5F8F34, COMMS_Nicolas): campos id/phone/email/name/segmento/canal/variable/variable_2/3. **Nada la referencia** en MC → carga **manual**.
+- Patrón recurrente: las queries "goalcomms"/"premioscomms"/etc NO llenan su DE; leen la DE de comms y registran ContactKey+Phone en `DE_Import_Whatsapp_ALLC` (FFE4485E) para habilitar WhatsApp.
+
+**Cómo el org SÍ deriva segmento/canal desde CRM (ej. query AutomatizacionM0, fuente `Opportunity_Salesforce`+Account+Contact):**
+- **canal** ← `Channel__c` + `Paylink_Type__c` (PAY_LINK+PHYSICAL STORE=Tienda Física, +SOCIAL SELLING=Redes sociales, E_COMMERCE=Página web, MARKETPLACE=Marketplace).
+- **segmento** ← `DATEDIFF(Checkin_Date_Activation__c, hoy)` = Days → S0(1-7)/S1(8-14)/S2(15-21)/S3(22-30)/>30 fuera.
+- **variable*** = contenido de campaña, NO campo CRM.
+- Otros: `Vertical__c`, `Ally_Cluster__c`, `Acquisition_Channel__c`, `StageName`. Query `DIAG_Canal_CRM`: canal='CRM - Contact/Lead/User' según objeto origen.
+
 ## Convenciones y particularidades
 
 - SubscriberKey = ID de Salesforce (contactos sincronizados vía Marketing Cloud Connect).
