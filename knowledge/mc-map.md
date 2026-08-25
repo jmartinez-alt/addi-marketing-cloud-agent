@@ -117,6 +117,14 @@ Migración a Marketing Cloud Next. Hallazgo: **NO se alimentan del CRM vía Auto
 - **variable*** = contenido de campaña, NO campo CRM.
 - Otros: `Vertical__c`, `Ally_Cluster__c`, `Acquisition_Channel__c`, `StageName`. Query `DIAG_Canal_CRM`: canal='CRM - Contact/Lead/User' según objeto origen.
 
+## Journey M0: mismatch de Event Definition Key (resuelto 2026-08-25)
+
+Error JB: "La clave de evento en la expresión no coincide con la clave del evento de ingreso". Causa: en la definición CRUDA del servidor (interaction API), el evento de ingreso era `AutomationAud-053f570e-...` (99 refs OK) pero `defaults.email[0]` y `defaults.mobileNumber[0]` apuntaban a una key vieja huérfana `AutomationAud-694f8e89-...` (2 refs). **mcdev NORMALIZA ambas keys a un alias (`DEAudience-f9748921-...`), así que el mismatch NO se ve en el JSON de mcdev — hay que leer el crudo por `GET interaction/v1/interactions/{id}?extras=all`.** Probablemente introducido/perpetuado por los deploys de journey por mcdev (beta).
+
+**Fix aplicado:** `PUT interaction/v1/interactions/{id}` reemplazando la key vieja por la del entry event en los 2 defaults (todo lo demás idéntico). Verificado: 0 refs a la key mala, journey sigue Draft. Backup: `mc-analysis/journey-raw-before-fix.json`.
+
+**Para diagnosticar keys de evento en journeys: usar la interaction API cruda, NO el retrieve de mcdev.**
+
 ## Convenciones y particularidades
 
 - SubscriberKey = ID de Salesforce (contactos sincronizados vía Marketing Cloud Connect).
