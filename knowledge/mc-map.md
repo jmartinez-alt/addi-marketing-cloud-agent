@@ -125,6 +125,17 @@ Error JB: "La clave de evento en la expresión no coincide con la clave del even
 
 **Para diagnosticar keys de evento en journeys: usar la interaction API cruda, NO el retrieve de mcdev.**
 
+## Journey "SMBs Estrategia Addi Radar" — WhatsApp no enviaba (2026-08-26)
+
+Journey id `7075ece7-...`, WhatsApp `smbs_addiradar_inbound_19_08_2026` (assetId 58879). Contactos fluían pero no enviaba. Causas encontradas (v5 y v8 iguales):
+1. **Plantilla WhatsApp en `Draft`** (asset status id:1) + categoría MARKETING. Meta templateId `1608000130973935`. → un template en Draft/no-aprobado NO envía. El estado de aprobación de Meta NO es consultable por API (endpoints `ott/v1/*` dan 404); verificar en Meta WhatsApp Manager o el canal.
+2. **Contactos no registrados en WhatsApp All Contacts**: la automation de registro "Prueba Cathe" (key f8774340, id b00ee4fa) estaba PausedSchedule. Sus pasos: query 805E1655 (Prueba_Cathe → DE_Import_Whatsapp_ALLC, solo nuevos) + importFile Import_WhatsApp_v2.
+3. Actividad enviaba por atributo `Phone` (`isDirectSend:false`) en vez de `defaultContactKey`.
+
+**Acciones ejecutadas:** (a) `mcdev execute automation f8774340` (run once) → 130 contactos de Prueba_Cathe quedaron en DE_Import_Whatsapp_ALLC con phone correcto (verificado ContactKey↔phone). (b) PUT interaction API: actividad WhatsApp → `defaultContactKey`. **Falta:** publicar el asset (Draft→Published) + aprobación Meta, y re-publicar el journey.
+
+Notas: la entry DE `Prueba_Cathe` usa PK `id` secuencial "1".."130" como ContactKey (frágil: si recargan con otra data, la registración WhatsApp no se actualiza porque la query solo inserta nuevos `WHERE ContactKey IS NULL`). Correr automation once: `mcdev execute addi/_ParentBU_ automation <key>` (NO el REST `/actions/start`, que pide 'Steps').
+
 ## Convenciones y particularidades
 
 - SubscriberKey = ID de Salesforce (contactos sincronizados vía Marketing Cloud Connect).
