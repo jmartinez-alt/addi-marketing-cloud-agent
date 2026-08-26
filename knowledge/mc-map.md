@@ -136,6 +136,10 @@ Journey id `7075ece7-...`, WhatsApp `smbs_addiradar_inbound_19_08_2026` (assetId
 
 Notas: la entry DE `Prueba_Cathe` usa PK `id` secuencial "1".."130" como ContactKey (frágil: si recargan con otra data, la registración WhatsApp no se actualiza porque la query solo inserta nuevos `WHERE ContactKey IS NULL`). Correr automation once: `mcdev execute addi/_ParentBU_ automation <key>` (NO el REST `/actions/start`, que pide 'Steps').
 
+**Continuación (contactos no ENTRABAN tras activar):** journey v10 quedó `entryMode: OnceAndDone` y los ContactKey "1".."130" YA habían entrado en v5 → con OnceAndDone no re-entran → 0 ingresos. Crear nuevos keys NO sirve (crecería la base facturable, justo el problema de sobrecosto). Solución = **re-entry anytime** (`entryMode: Unrestricted`), que deja re-entrar los MISMOS keys sin crecer la base.
+**LÍMITES API journeys (todo 400/no confiable):** cambiar `entryMode` por PUT → 400 "JSON Deserialization"; crear versión por POST → 400; publicar en Stopped → "Cannot publish in Stopped status". El versionado/activación/re-entry de journeys hay que hacerlo por **UI**. Lo único que sí funcionó por API: stop (`POST interaction/v1/interactions/stop/{id}?versionNumber=N`), editar actividades por PUT (en Draft), y `publishAsync` (solo si NO está Stopped).
+**Solución final:** clonar a un **journey NUEVO** ("SMBs Estrategia Addi Radar 2.0", id 4d6767b6). La restricción de re-entrada es **por-journey**, así que en un journey nuevo los mismos ContactKey entran sin crear contactos. Verificado que el clon heredó: `defaultContactKey`, DE Prueba_Cathe, template aprobado 58879, event key consistente, y quedó `entryMode: MultipleEntries` + Published.
+
 ## Convenciones y particularidades
 
 - SubscriberKey = ID de Salesforce (contactos sincronizados vía Marketing Cloud Connect).
