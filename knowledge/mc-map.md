@@ -140,6 +140,13 @@ Notas: la entry DE `Prueba_Cathe` usa PK `id` secuencial "1".."130" como Contact
 **LÍMITES API journeys (todo 400/no confiable):** cambiar `entryMode` por PUT → 400 "JSON Deserialization"; crear versión por POST → 400; publicar en Stopped → "Cannot publish in Stopped status". El versionado/activación/re-entry de journeys hay que hacerlo por **UI**. Lo único que sí funcionó por API: stop (`POST interaction/v1/interactions/stop/{id}?versionNumber=N`), editar actividades por PUT (en Draft), y `publishAsync` (solo si NO está Stopped).
 **Solución final:** clonar a un **journey NUEVO** ("SMBs Estrategia Addi Radar 2.0", id 4d6767b6). La restricción de re-entrada es **por-journey**, así que en un journey nuevo los mismos ContactKey entran sin crear contactos. Verificado que el clon heredó: `defaultContactKey`, DE Prueba_Cathe, template aprobado 58879, event key consistente, y quedó `entryMode: MultipleEntries` + Published.
 
+## Automation "J01 V2 Pending App & Int Supp" falla (2026-09-04)
+
+Automation key `390c6ea2-27bc-4285-8057-e20d87bd41fe` (id `0cf1e082-...`), Scheduled cada 15 min, notifica Complete+Error a jmartinez@addi.com. Pasos: (1) query `J01 V2 Pen App e Int Sup` → DE `DE_Journey_v2_Integration_Pending_` (5045209D) desde Opportunity_Salesforce WHERE StageName IN ('Integration Support','Pending Applications'); (2) query registro WhatsApp; (3) importFile Import_WhatsApp_v2; (4) **journeyEntry → journey `J01V2 Pending App + Int`** (key 57dd9615, **Published v3 = PRODUCCIÓN**).
+- **Desde cuándo:** fallos aislados desde oct-2024; **persistente DIARIO desde 2026-08-24** (antes, la falla previa fue 30-abr-2026). Rastreado por Gmail (asunto "Error: Automation 'J01 V2 Pending App & Int Supp' Failed", de noreply@mc.salesforce.com).
+- El email de SFMC es genérico ("did not finish; ver Activity tab") — NO dice el paso que falla; hay que ver la pestaña Activity de Automation Studio o rastrear la query.
+- **Técnica útil:** para "¿desde cuándo falla una automation?" buscar los correos de notificación en Gmail (`from:noreply@mc.salesforce.com subject:"<nombre>" Failed`). Para "¿a qué journey está anclada?" mirar el paso `journeyEntry` de la automation y cruzar la DE de entrada con el journey Published.
+
 ## Convenciones y particularidades
 
 - SubscriberKey = ID de Salesforce (contactos sincronizados vía Marketing Cloud Connect).
